@@ -1,99 +1,150 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 콘서트 예매 사이트 API 문서
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 목차
+1. [로그인](#로그인)
+2. [회원가입](#회원가입)
+3. [프로필 보기](#프로필-보기)
+4. [새 콘서트 등록 (어드민)](#새-콘서트-등록-어드민)
+5. [콘서트 목록 보기](#콘서트-목록-보기)
+6. [콘서트 상세보기](#콘서트-상세보기)
+7. [콘서트 삭제하기](#콘서트-삭제하기)
+8. [좌석을 지정하여 예매하기](#좌석을-지정하여-예매하기)
+9. [예매한 티켓 조회하기](#예매한-티켓-조회하기)
+10. [예매 취소하기](#예매-취소하기)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 로그인
+**Endpoint:** `/api/auth/signin`  
+**Method:** `POST`  
+**Request:**  
+- email: 사용자 이메일  
+- password: 사용자 비밀번호  
 
-## Description
+**Response:**  
+- "accessToken": "jwt token"
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 회원가입
+**Endpoint:** `/api/auth/signup`  
+**Method:** `POST`  
+**Request:**  
+- username: 사용자 이름  
+- email: 사용자 이메일  
+- password: 사용자 비밀번호  
+- admin: "true" or "false" (어드민 권한 유무)
 
-## Project setup
+**Response:**  
+- username: 사용자 이름  
+- email: 사용자 이메일  
+- password: 사용자 비밀번호  
+- admin: "true" or "false" (어드민 권한 유무)
+- "id": 유저ID
+- "createdAt": 가입날짜
 
-```bash
-$ npm install
-```
+## 프로필 보기
+**Endpoint:** `/api/auth/:id`  
+**Method:** `GET`  
+**Request:** (없음)  
 
-## Compile and run the project
+**Response:**  
+- id: 유저 id  
+- email: 사용자 이메일  
+- password: 사용자 비밀번호  
+- createdAt: 가입날짜  
+- admin: "true" or "false" (어드민 권한 유무)  
+- concerts: [해당 유저가 등록한 concerts 배열]
 
-```bash
-# development
-$ npm run start
+## 새 콘서트 등록 (어드민)
+**Endpoint:** `/api/concert/create`  
+**Method:** `POST`  
+**Request:**  
+- title: 제목  
+- date: 콘서트 날짜  
+- concertTime: 콘서트 시간  
+- genre: 장르  
+- description: 설명  
+- status: "POSSIBLE" or "IMPOSSIBLE" (예매 가능 여부)
 
-# watch mode
-$ npm run start:dev
+**Response:**  
+- title: 제목  
+- date: 콘서트 날짜  
+- concertTime: 콘서트 시간  
+- genre: 장르  
+- description: 설명  
+- status: "POSSIBLE" or "IMPOSSIBLE" (예매 가능 여부)  
+- user: {콘서트 작성자 정보}
 
-# production mode
-$ npm run start:prod
-```
+**기능:**  
+- 공연 등록 시 좌석 30개가 자동 생성됩니다.
 
-## Run tests
+## 콘서트 목록 보기
+**Endpoint:** `/api/concerts`  
+**Method:** `GET`  
+**Request:** (없음)  
 
-```bash
-# unit tests
-$ npm run test
+**Response:**  
+- id: 콘서트 ID  
+- title: 콘서트 제목  
+- date: 콘서트 날짜 및 시간  
+- concertTime: 콘서트 시간  
+- genre: 콘서트 장르  
+- description: 콘서트 설명  
+- status: "POSSIBLE" or "IMPOSSIBLE" (예매 가능 여부)
 
-# e2e tests
-$ npm run test:e2e
+## 콘서트 상세보기
+**Endpoint:** `/api/concert/:id`  
+**Method:** `GET`  
+**Request:** (없음)  
 
-# test coverage
-$ npm run test:cov
-```
+**Response:**  
+- id: 콘서트 ID  
+- title: 콘서트 제목  
+- date: 콘서트 날짜 및 시간  
+- concertTime: 콘서트 시간  
+- genre: 콘서트 장르  
+- description: 콘서트 설명  
+- status: "POSSIBLE" or "IMPOSSIBLE" (예매 가능 여부)
 
-## Deployment
+## 콘서트 삭제하기
+**Endpoint:** `/api/concert/:id`  
+**Method:** `DELETE`  
+**Request:** (없음)  
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+**Response:** (없음)
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 좌석을 지정하여 예매하기
+**Endpoint:** `/api/tickets/ticketing`  
+**Method:** `POST`  
+**Request:**  
+- concertId: 예매하고자 하는 공연 ID    
+- seatNumber: 예매하고자 하는 좌석 번호  
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+**Response:**  
+- seatNumber: 예매 완료한 좌석 번호  
+- user: {예매한 유저 정보}  
+- concert: {예매한 콘서트 정보}
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+**기능:**  
+- 유저 포인트 차감  
+- 유저 포인트 히스토리 자동 생성  
+- 예매 가능한 좌석 DB에서 예매 완료한 좌석 자동 삭제
 
-## Resources
+## 예매한 티켓 조회하기
+**Endpoint:** `/api/reservation/confirmation`  
+**Method:** `GET`  
+**Request:**  
+- reservationId: 예약 ID  
 
-Check out a few resources that may come in handy when working with NestJS:
+**Response:**  
+- reservationId: 예약 ID  
+- concertId: 공연 ID  
+- userId: 사용자 ID  
+- seatNumbers: 예매된 좌석 번호 목록  
+- status: 예매 확인 상태  
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 예매 취소하기
+**Endpoint:** `/api/reservation/cancel`  
+**Method:** `POST`  
+**Request:**  
+- reservationId: 예약 ID  
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+**Response:**  
+- message: 예매 취소 완료 메시지
